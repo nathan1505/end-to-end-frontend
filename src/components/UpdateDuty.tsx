@@ -1,5 +1,5 @@
-"use strict"
 import React, { useState } from 'react';
+import { Form, Input, Button, Modal, notification } from 'antd';
 
 interface Duty {
     id: string;
@@ -18,42 +18,64 @@ const UpdateDuty: React.FC<UpdateDutyProps> = ({ duty, onUpdateDuty, onDeleteDut
 
     const handleUpdate = () => {
         if (newName.trim() === '') {
-            alert('The duty name cannot be empty.');
+            notification.error({
+                message: 'Error',
+                description: 'The duty name cannot be empty.'
+            });
             return; // Prevent update if the input is empty
         }
-        if (window.confirm('Are you sure you want to update this duty?')) {
-            onUpdateDuty({ ...duty, name: newName });
-            setEditMode(false); // Optionally reset edit mode
-            setNewName('');     // Clear input after update
-        }
+        Modal.confirm({
+            title: 'Confirm Update',
+            content: 'Are you sure you want to update this duty?',
+            onOk() {
+                onUpdateDuty({ ...duty, name: newName });
+                setEditMode(false); // Optionally reset edit mode
+                setNewName('');     // Clear input after update
+                notification.success({
+                    message: 'Updated',
+                    description: 'Duty has been updated successfully.'
+                });
+            }
+        });
     };
 
     const handleDelete = () => {
-        if (window.confirm('Are you sure you want to delete this duty?')) {
-            onDeleteDuty(duty.id);
-        }
+        Modal.confirm({
+            title: 'Confirm Deletion',
+            content: 'Are you sure you want to delete this duty?',
+            onOk() {
+                onDeleteDuty(duty.id);
+                notification.success({
+                    message: 'Deleted',
+                    description: 'Duty has been deleted successfully.'
+                });
+            }
+        });
     };
 
     return (
         <div>
             <div>{duty.name}</div>
             {editMode ? (
-                <form onSubmit={(e) => {
-                    e.preventDefault();
-                    handleUpdate();
-                }}>
-                    <input
-                        type="text"
-                        placeholder="Enter new duty name"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                    />
-                    <button type="submit">Update</button>
-                </form>
+                <Form
+                    onFinish={handleUpdate}
+                >
+                    <Form.Item
+                        name="name"
+                        rules={[{ required: true, message: 'Please input the new duty name!' }]}
+                    >
+                        <Input
+                            placeholder="Enter new duty name"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                        />
+                    </Form.Item>
+                    <Button type="primary" htmlType="submit">Update</Button>
+                </Form>
             ) : (
-                <button onClick={() => setEditMode(true)}>Edit</button>
+                <Button onClick={() => setEditMode(true)}>Edit</Button>
             )}
-            <button onClick={handleDelete}>Delete</button>
+            <Button onClick={handleDelete} danger>Delete</Button>
         </div>
     );
 };

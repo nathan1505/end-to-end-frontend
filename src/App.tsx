@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Button, List, Typography } from 'antd';
 import DutyForm from './components/DutyForm';
 import DutyList from './components/DutyList';
 import { getDuties, updateDuty } from './api/dutiesApi';
@@ -32,7 +33,7 @@ const App = () => {
 
     return (
         <div>
-            <h1>Duties Manager</h1>
+            <Typography.Title level={1}>Duties Manager</Typography.Title>
             <DutyForm onDutyAdded={duty => setDuties([...duties, duty])} />
             <DutyList duties={duties} onUpdateDuty={handleUpdateDuty} onDeleteDuty={handleDeleteDuty} />
         </div>

@@ -1,6 +1,6 @@
-"use strict"
 import React, { useState } from 'react';
 import { createDuty } from '../api/dutiesApi';
+import { Form, Input, Button, notification } from 'antd';
 
 interface Duty {
     id: string;
@@ -12,47 +12,46 @@ interface DutyFormProps {
 }
 
 const DutyForm: React.FC<DutyFormProps> = ({ onDutyAdded }) => {
-    const [name, setName] = useState('');
-    const [error, setError] = useState<string | null>(null);
+    const [form] = Form.useForm();
 
-    const validateInput = () => {
-        if (!name.trim()) {
-            setError('Duty name cannot be empty.');
-            return false;
-        }
-        // Add more validation checks if necessary
-        setError(null);
-        return true;
-    };
-
-    const handleSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-        if (!validateInput()) {
-            return; // Stop the form submission if validation fails
-        }
+    const handleSubmit = async (values: { name: string }) => {
         try {
-            const newDuty = await createDuty(name);
+            const newDuty = await createDuty(values.name);
             onDutyAdded(newDuty);
-            setName(''); // Reset the form field
-            setError(null); // Clear any errors
+            form.resetFields(); // Reset the form fields after successful submission
+            notification.success({
+                message: 'Success',
+                description: 'Duty successfully added.',
+            });
         } catch (error) {
             // Handle potential errors from the API or network issues
-            setError('Failed to create duty. Please try again.');
+            notification.error({
+                message: 'Error',
+                description: 'Failed to create duty. Please try again.',
+            });
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Enter duty name"
-                required
-            />
-            {error && <div style={{ color: 'red' }}>{error}</div>}
-            <button type="submit">Add Duty</button>
-        </form>
+        <Form
+            form={form}
+            onFinish={handleSubmit}
+            layout="vertical"
+            requiredMark={false}
+        >
+            <Form.Item
+                label="Duty Name"
+                name="name"
+                rules={[{ required: true, message: 'Please input the duty name!' }]}
+            >
+                <Input placeholder="Enter duty name" />
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" htmlType="submit">
+                    Add Duty
+                </Button>
+            </Form.Item>
+        </Form>
     );
 };
 
