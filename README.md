@@ -55,3 +55,11 @@ npm start
 yarn start
 ```
 This will start the development server and open the application in your default web browser.
+
+6. **(Optional) Test the Application**
+You can run the Jest script by run:
+ ```bash
+npm test
+# Or if you are using Yarn
+yarn test
+```
