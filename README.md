@@ -1,6 +1,7 @@
 # Frontend Application
 
 This README provides instructions on how to set up and run the frontend for the end-to-end web application.
+![image](https://github.com/user-attachments/assets/e0fb4ff9-b6ef-43e4-a79a-db7aace2c38c)
 
 ## Prerequisites
 
